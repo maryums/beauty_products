@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>
+        Ultimate Sephora List
+    </title>
+</head>
+
+<body>
+    <div id="add_item">
+        <form action="/add_items" method="POST">
+            <select name="select_items">
+                {% for item in all_data%}
+                <option value="{{ item }}"> {{ item}}</option>
+                {% endfor%}
+                <input type="submit" value="ADD_ITEM">
+        </form>
+    </div>
+</body>
+
+</html>
