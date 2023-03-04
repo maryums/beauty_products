@@ -5,13 +5,31 @@
     <title>
         Ultimate Sephora List
     </title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/main.css')}}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Raleway&display=swap" rel="stylesheet">
 </head>
 
 <body>
+    <div>
+        <h1>Sephora Shopping List</h1>
+    </div>
+
+    <div id="remove_items">
+        <form action="/remove_items" method="POST">
+            {% for item in shopping_items %}
+            <input type="checkbox" name="check" id="{{item}}" value="{{item}}">
+            <label for="{{item}}" name="{{item}}"> {{item}}</label> <br>
+            {% endfor %}
+            <input type="submit" value="REMOVE ITEMS">
+        </form>
+    </div>
+
     <div id="add_item">
         <form action="/add_items" method="POST">
             <select name="select_items">
-                {% for item in all_data%}
+                {% for item in all_items %}
                 <option value="{{ item }}"> {{ item}}</option>
                 {% endfor%}
                 <input type="submit" value="ADD_ITEM">

@@ -5,14 +5,26 @@ from flask import Flask, session, render_template, request, g
 app = Flask(__name__)
 app.secret_key = "234e_blahblahhah_"
 
-@app.route("/")
+@app.route("/", methods=["POST", "GET"])
 def index():
-    data = get_db()
-    return render_template("index.html", all_data=data)
+    session["all_items"], session["shopping_items"] = get_db()
+    return render_template("index.html", all_items=session["all_items"], shopping_items=session["shopping_items"])
 
-@app.route("/add_items", methods=["post"])
+@app.route("/add_items", methods=["POST"])
 def add_items():
-    return request.form["select_items"]
+    session["shopping_items"].append(request.form["select_items"])
+    session.modified = True
+    return render_template("index.html", all_items=session["all_items"], shopping_items=session["shopping_items"])
+
+@app.route("/remove_items", methods=["POST"])
+def remove_items():
+    checked_boxes = request.form.getlist("check")
+    for item in checked_boxes:
+        if item in session["shopping_items"]:
+            idx = session["shopping_items"].index(item)
+            session["shopping_items"].pop(idx)
+            session.modified = True
+    return render_template("index.html", all_items=session["all_items"], shopping_items=session["shopping_items"])
 
 
 def get_db():
@@ -23,7 +35,12 @@ def get_db():
         cursor.execute("select name from products")
         all_data = cursor.fetchall()
         all_data =  [str(val[0]) for val in all_data]
-    return all_data
+
+        shopping_list = all_data.copy()
+        random.shuffle(shopping_list)
+        shopping_list = shopping_list[:3]
+        
+    return all_data, shopping_list
 
 @app.teardown_appcontext
 def close_connection(exception):
